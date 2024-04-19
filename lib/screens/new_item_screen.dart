@@ -14,6 +14,19 @@ class NewItemScreen extends StatefulWidget {
 }
 
 class _NewItemScreenState extends State<NewItemScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  void _saveItem() {
+    if (_formKey.currentState!.validate()) {
+      // Save the item
+    }
+  }
+
+  void _resetItem() {
+    // Reset the form
+    _formKey.currentState!.reset();
+  }
+
   @override
   Widget build(BuildContext context) {
     /*
@@ -30,6 +43,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Form(
+            key: _formKey,
             child: Column(
               children: [
                 TextFormField(
@@ -56,6 +70,15 @@ class _NewItemScreenState extends State<NewItemScreen> {
                     FilteringTextInputFormatter.digitsOnly,
                     ThousandsFormatter(),
                   ],
+                  validator: (value) {
+                    if (value == null ||
+                        value.trim().isEmpty ||
+                        int.tryParse(value) == null ||
+                        int.tryParse(value)! <= 0) {
+                      return 'Please enter a valid quantity';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField(
@@ -75,7 +98,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                         child: ElevatedButton.icon(
                           icon: const Icon(Icons.restore),
                           label: const Text('Reset'),
-                          onPressed: () {},
+                          onPressed: _resetItem,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -90,7 +113,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                             backgroundColor:
                                 Theme.of(context).colorScheme.primaryContainer,
                           ),
-                          onPressed: () {},
+                          onPressed: _saveItem,
                         ),
                       ),
                     ],
