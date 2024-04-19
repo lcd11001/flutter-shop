@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:shopping/data/categories.dart';
 import 'package:shopping/models/category.dart';
 import 'package:shopping/models/grocery_item.dart';
 
 import 'package:shopping/utils/thousands_formatter.dart';
 import 'package:uuid/uuid.dart';
 
+import 'package:shopping/providers/grocery_category_provider.dart';
+
 const uuid = Uuid();
 
-class NewItemScreen extends StatefulWidget {
+class NewItemScreen extends ConsumerStatefulWidget {
   const NewItemScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _NewItemScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _NewItemScreenState();
 }
 
-class _NewItemScreenState extends State<NewItemScreen> {
+class _NewItemScreenState extends ConsumerState<NewItemScreen> {
   final _formKey = GlobalKey<FormState>();
   String _itemName = '';
   int _itemQuantity = 1;
@@ -161,6 +163,8 @@ class _NewItemScreenState extends State<NewItemScreen> {
   }
 
   List<DropdownMenuItem<Category>> _buildCategoryItems() {
+    final categories = ref.watch(groceryCategoryProvider);
+
     return categories.entries.map((item) {
       return DropdownMenuItem<Category>(
         value: item.value,
