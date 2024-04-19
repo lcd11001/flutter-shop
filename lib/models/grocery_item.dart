@@ -12,4 +12,9 @@ class GroceryItem {
     required this.quantity,
     required this.category,
   });
+
+  @override
+  String toString() {
+    return '$name : $quantity : ${category.name}';
+  }
 }
