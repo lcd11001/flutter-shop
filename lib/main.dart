@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:shopping/screens/grocery_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
+
+  // Hide both the status bar and the navigation bar
+  // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+
   runApp(const MainApp());
 }
 

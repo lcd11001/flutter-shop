@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 import 'package:shopping/data/categories.dart';
 import 'package:shopping/models/category.dart';
@@ -16,54 +18,90 @@ class NewItemScreen extends StatefulWidget {
 class _NewItemScreenState extends State<NewItemScreen> {
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final keyboardSpace = media.viewInsets.bottom;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add New Item'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-            child: Column(
-          children: [
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Name',
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            16 + keyboardSpace,
+          ),
+          child: Form(
+              child: Column(
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Name',
+                ),
+                keyboardType: TextInputType.text,
+                maxLength: 50,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter a name';
+                  }
+                  return null;
+                },
               ),
-              keyboardType: TextInputType.text,
-              maxLength: 50,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter a name';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              initialValue: '1',
-              decoration: const InputDecoration(
-                labelText: 'Quantity',
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: '1',
+                decoration: const InputDecoration(
+                  labelText: 'Quantity',
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  ThousandsFormatter(),
+                ],
               ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                ThousandsFormatter(),
-              ],
-            ),
-            DropdownButtonFormField(
-              items: _buildCategoryItems(),
-              onChanged: (selected) {
-                debugPrint('Selected: $selected');
-              },
-              decoration: const InputDecoration(
-                labelText: 'Category',
+              const SizedBox(height: 16),
+              DropdownButtonFormField(
+                items: _buildCategoryItems(),
+                onChanged: (selected) {
+                  debugPrint('Selected: $selected');
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Category',
+                ),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Add Item'),
-            ),
-          ],
-        )),
+              const SizedBox(height: 32),
+              IntrinsicWidth(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.restore),
+                        label: const Text('Reset'),
+                        onPressed: () {},
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add Item'),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primaryContainer,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          )),
+        ),
       ),
     );
   }
