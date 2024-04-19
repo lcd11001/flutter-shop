@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:shopping/screens/new_item_screen.dart';
 
 import 'package:shopping/widgets/grocery_list.dart';
