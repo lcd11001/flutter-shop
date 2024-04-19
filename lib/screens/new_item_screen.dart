@@ -15,10 +15,17 @@ class NewItemScreen extends StatefulWidget {
 
 class _NewItemScreenState extends State<NewItemScreen> {
   final _formKey = GlobalKey<FormState>();
+  String _itemName = '';
+  int _itemQuantity = 1;
+  Category? _itemCategory;
 
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
       // Save the item
+      _formKey.currentState!.save();
+      debugPrint('Name: $_itemName');
+      debugPrint('Quantity: $_itemQuantity');
+      debugPrint('Category: ${_itemCategory!.name}');
     }
   }
 
@@ -58,10 +65,11 @@ class _NewItemScreenState extends State<NewItemScreen> {
                     }
                     return null;
                   },
+                  onSaved: (newValue) => _itemName = newValue!,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  initialValue: '1',
+                  initialValue: _itemQuantity.toString(),
                   decoration: const InputDecoration(
                     labelText: 'Quantity',
                   ),
@@ -73,22 +81,35 @@ class _NewItemScreenState extends State<NewItemScreen> {
                   validator: (value) {
                     if (value == null ||
                         value.trim().isEmpty ||
-                        int.tryParse(value) == null ||
-                        int.tryParse(value)! <= 0) {
+                        int.tryParse(value.replaceAll(',', '')) == null ||
+                        int.tryParse(value.replaceAll(',', ''))! <= 0) {
                       return 'Please enter a valid quantity';
                     }
                     return null;
                   },
+                  onSaved: (newValue) =>
+                      _itemQuantity = int.parse(newValue!.replaceAll(',', '')),
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField(
+                  value: _itemCategory,
                   items: _buildCategoryItems(),
                   onChanged: (selected) {
                     debugPrint('Selected: $selected');
+                    // don't need to call onSaved here
+                    setState(() {
+                      _itemCategory = selected!;
+                    });
                   },
                   decoration: const InputDecoration(
                     labelText: 'Category',
                   ),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please select a category';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 32),
                 IntrinsicWidth(
