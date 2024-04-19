@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shopping/models/grocery_item.dart';
 
 import 'package:shopping/providers/grocery_item_provider.dart';
 import 'package:shopping/screens/new_item_screen.dart';
@@ -28,20 +29,46 @@ class GroceryScreen extends ConsumerWidget {
       ),
       body: GroceryList(
         groceries: groceryItems,
+        onDismissed: (item) {
+          _removeItem(ref, item);
+          _showSnackBar(context, ref, item);
+        },
       ),
     );
   }
 
   _openNewItemScreen(BuildContext context, WidgetRef ref) async {
-    final newItem = await Navigator.of(context).push(MaterialPageRoute(
-      builder: (ctx) => const NewItemScreen(),
-    ));
+    final newItem = await Navigator.of(context).push<GroceryItem>(
+      MaterialPageRoute(
+        builder: (ctx) => const NewItemScreen(),
+      ),
+    );
 
     if (newItem != null) {
       // Add the new item to the list
-      // groceryItems.add(newItem);
       debugPrint('Adding new item: $newItem');
       ref.read(groceryItemProvider.notifier).add(newItem);
     }
   }
+
+  void _removeItem(WidgetRef ref, GroceryItem item) {
+    debugPrint('Removing item: $item');
+    ref.read(groceryItemProvider.notifier).remove(item);
+  }
+}
+
+void _showSnackBar(BuildContext context, WidgetRef ref, GroceryItem item) {
+  ScaffoldMessenger.of(context).clearSnackBars();
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text('${item.name} removed from the list'),
+      action: SnackBarAction(
+        label: 'UNDO',
+        onPressed: () {
+          ref.read(groceryItemProvider.notifier).add(item);
+        },
+      ),
+    ),
+  );
 }
