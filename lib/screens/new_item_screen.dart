@@ -3,8 +3,12 @@ import 'package:flutter/services.dart';
 
 import 'package:shopping/data/categories.dart';
 import 'package:shopping/models/category.dart';
+import 'package:shopping/models/grocery_item.dart';
 
 import 'package:shopping/utils/thousands_formatter.dart';
+import 'package:uuid/uuid.dart';
+
+const uuid = Uuid();
 
 class NewItemScreen extends StatefulWidget {
   const NewItemScreen({super.key});
@@ -23,9 +27,17 @@ class _NewItemScreenState extends State<NewItemScreen> {
     if (_formKey.currentState!.validate()) {
       // Save the item
       _formKey.currentState!.save();
-      debugPrint('Name: $_itemName');
-      debugPrint('Quantity: $_itemQuantity');
-      debugPrint('Category: ${_itemCategory!.name}');
+      // debugPrint('Name: $_itemName');
+      // debugPrint('Quantity: $_itemQuantity');
+      // debugPrint('Category: ${_itemCategory!.name}');
+      Navigator.of(context).pop(
+        GroceryItem(
+          id: uuid.v4(),
+          name: _itemName,
+          quantity: _itemQuantity,
+          category: _itemCategory!,
+        ),
+      );
     }
   }
 
