@@ -5,16 +5,12 @@ import 'package:shopping/data/dummy_items.dart';
 import 'package:shopping/models/grocery_item.dart';
 
 class GroceryItemProvider extends StateNotifier<AsyncValue<List<GroceryItem>>> {
-  GroceryItemProvider() : super(const AsyncData([])) {
+  GroceryItemProvider() : super(const AsyncLoading()) {
     _init();
   }
 
   Future<void> _init() async {
-    state = const AsyncLoading();
-    final items = await AsyncValue.guard(() => API.fetchGroceryItems());
-    if (mounted) {
-      state = items;
-    }
+    state = await AsyncValue.guard(() => API.fetchGroceryItems());
   }
 
   Future<bool> add(GroceryItem item) async {
