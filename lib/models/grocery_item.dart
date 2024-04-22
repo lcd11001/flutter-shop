@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:shopping/models/category.dart';
@@ -43,6 +44,15 @@ class GroceryItem {
       name: name,
       quantity: quantity,
       category: category,
+    );
+  }
+
+  static GroceryItem fromJson(value, String key) {
+    return GroceryItem.withId(
+      id: key,
+      name: value['name'],
+      quantity: value['quantity'],
+      category: Category(value['category'], Colors.black),
     );
   }
 }

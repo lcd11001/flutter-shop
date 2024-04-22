@@ -8,12 +8,13 @@ import 'package:shopping/models/grocery_item.dart';
 class GroceryItemProvider extends StateNotifier<List<GroceryItem>> {
   GroceryItemProvider() : super(groceryItems);
 
-  void add(GroceryItem item) async {
+  Future<bool> add(GroceryItem item) async {
     final (success, id) = await API.addGroceryItem(item);
     debugPrint("Success: $success, ID: $id");
     if (success) {
       state = [...state, item.clone(id)];
     }
+    return success;
   }
 
   void remove(GroceryItem item) {

@@ -47,7 +47,13 @@ class GroceryScreen extends ConsumerWidget {
     if (newItem != null) {
       // Add the new item to the list
       debugPrint('Adding new item: $newItem');
-      ref.read(groceryItemProvider.notifier).add(newItem);
+      final success = await ref.read(groceryItemProvider.notifier).add(newItem);
+
+      if (!success) {
+        if (context.mounted) {
+          _showErrorSnackBar(context, 'Failed to add item to the list');
+        }
+      }
     }
   }
 
@@ -55,20 +61,36 @@ class GroceryScreen extends ConsumerWidget {
     debugPrint('Removing item: $item');
     ref.read(groceryItemProvider.notifier).remove(item);
   }
-}
 
-void _showSnackBar(BuildContext context, WidgetRef ref, GroceryItem item) {
-  ScaffoldMessenger.of(context).clearSnackBars();
+  void _showSnackBar(BuildContext context, WidgetRef ref, GroceryItem item) {
+    ScaffoldMessenger.of(context).clearSnackBars();
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('${item.name} removed from the list'),
-      action: SnackBarAction(
-        label: 'UNDO',
-        onPressed: () {
-          ref.read(groceryItemProvider.notifier).add(item);
-        },
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${item.name} removed from the list'),
+        action: SnackBarAction(
+          label: 'UNDO',
+          onPressed: () async {
+            final success =
+                await ref.read(groceryItemProvider.notifier).add(item);
+            if (!success) {
+              if (context.mounted) {
+                _showErrorSnackBar(context, 'Failed to UNDO');
+              }
+            }
+          },
+        ),
       ),
-    ),
-  );
+    );
+  }
+
+  void _showErrorSnackBar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+      ),
+    );
+  }
 }
