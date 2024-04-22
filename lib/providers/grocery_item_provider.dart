@@ -27,12 +27,18 @@ class GroceryItemProvider extends StateNotifier<AsyncValue<List<GroceryItem>>> {
   }
 
   Future<void> remove(GroceryItem item) async {
-    state = const AsyncLoading<List<GroceryItem>>().copyWithPrevious(state);
+    final items = state.value ?? [];
+    final remainItems =
+        items.where((element) => element.id != item.id).toList();
+
+    // fix dissmissed item not removed from the list
+    state = const AsyncLoading<List<GroceryItem>>()
+        .copyWithPrevious(AsyncValue.data(remainItems));
+
     state = await AsyncValue.guard(() async {
-      final items = state.value ?? [];
       final success = await API.removeGroceryItem(item.id);
       if (success) {
-        return items.where((element) => element.id != item.id).toList();
+        return remainItems;
       }
       return items;
     });
