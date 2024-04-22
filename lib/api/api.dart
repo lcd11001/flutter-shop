@@ -41,11 +41,13 @@ class API {
       debugPrint("Response: ${response.body}");
 
       if (response.statusCode == 200) {
-        Map<String, dynamic> body = json.decode(response.body);
-        List<GroceryItem> items = [];
+        final Map<String, dynamic> body = json.decode(response.body);
+        final List<GroceryItem> items = [];
+
         body.forEach((key, value) {
           items.add(GroceryItem.fromJson(value, key));
         });
+
         return items;
       }
     } catch (exception) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shopping/providers/grocery_item_provider.dart';
 
 import 'package:shopping/screens/grocery_screen.dart';
 
@@ -22,8 +23,19 @@ Future<void> main() async {
   );
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends ConsumerStatefulWidget {
   const MainApp({super.key});
+
+  @override
+  ConsumerState<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends ConsumerState<MainApp> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(groceryItemProvider.notifier).init();
+  }
 
   @override
   Widget build(BuildContext context) {
