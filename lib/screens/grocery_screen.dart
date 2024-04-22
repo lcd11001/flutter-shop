@@ -28,7 +28,7 @@ class GroceryScreen extends ConsumerWidget {
         ],
       ),
       body: GroceryList(
-        groceries: groceryItems,
+        groceries: groceryItems.value ?? [],
         onDismissed: (item) {
           _removeItem(ref, item);
           _showSnackBar(context, ref, item);

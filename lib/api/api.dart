@@ -9,7 +9,10 @@ class API {
   static const String kBaseUrl =
       "flutter-test-6364b-default-rtdb.asia-southeast1.firebasedatabase.app";
 
-  static Future<(bool, String)> addGroceryItem(GroceryItem item) async {
+  static Future<GroceryItem?> addGroceryItem(GroceryItem item) async {
+    // for testing
+    await Future.delayed(const Duration(seconds: 3));
+
     try {
       final response = await http.post(
         Uri.https(kBaseUrl, "shopping-list.json"),
@@ -24,15 +27,18 @@ class API {
       if (response.statusCode == 200) {
         Map<String, dynamic> body = json.decode(response.body);
         String id = body['name'] as String;
-        return (true, id);
+        return item.clone(id);
       }
     } catch (exception) {
       debugPrint("Response Exception: $exception");
     }
-    return (false, "");
+    return null;
   }
 
   static Future<List<GroceryItem>> fetchGroceryItems() async {
+    // for testing
+    await Future.delayed(const Duration(seconds: 3));
+
     try {
       final response = await http.get(
         Uri.https(kBaseUrl, "shopping-list.json"),
@@ -40,7 +46,7 @@ class API {
 
       debugPrint("Response: ${response.body}");
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.body != "null") {
         final Map<String, dynamic> body = json.decode(response.body);
         final List<GroceryItem> items = [];
 

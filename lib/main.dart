@@ -23,24 +23,27 @@ Future<void> main() async {
   );
 }
 
-class MainApp extends ConsumerStatefulWidget {
+class MainApp extends ConsumerWidget {
   const MainApp({super.key});
 
   @override
-  ConsumerState<MainApp> createState() => _MainAppState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(groceryItemProvider);
 
-class _MainAppState extends ConsumerState<MainApp> {
-  @override
-  void initState() {
-    super.initState();
-    ref.read(groceryItemProvider.notifier).init();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: GroceryScreen(),
+    return MaterialApp(
+      home: Stack(
+        children: [
+          const GroceryScreen(),
+          if (state.isLoading)
+            const Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

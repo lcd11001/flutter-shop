@@ -1,33 +1,45 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:shopping/api/api.dart';
 import 'package:shopping/data/dummy_items.dart';
 import 'package:shopping/models/grocery_item.dart';
 
-class GroceryItemProvider extends StateNotifier<List<GroceryItem>> {
-  GroceryItemProvider() : super([]);
+class GroceryItemProvider extends StateNotifier<AsyncValue<List<GroceryItem>>> {
+  GroceryItemProvider() : super(const AsyncData([])) {
+    _init();
+  }
 
-  void init() async {
-    final items = await API.fetchGroceryItems();
-    state = items;
+  Future<void> _init() async {
+    state = const AsyncLoading();
+    final items = await AsyncValue.guard(() => API.fetchGroceryItems());
+    if (mounted) {
+      state = items;
+    }
   }
 
   Future<bool> add(GroceryItem item) async {
-    final (success, id) = await API.addGroceryItem(item);
-    debugPrint("Success: $success, ID: $id");
-    if (success) {
-      state = [...state, item.clone(id)];
+    final items = state.value!;
+    state = const AsyncLoading();
+    final newItem = await AsyncValue.guard(() => API.addGroceryItem(item));
+
+    if (mounted && newItem.value != null) {
+      // update new state
+      state = AsyncValue.data([...items, newItem.value!]);
+      return true;
     }
-    return success;
+
+    return false;
   }
 
   void remove(GroceryItem item) {
-    state = state.where((element) => element.id != item.id).toList();
+    // state = state.where((element) => element.id != item.id).toList();
+    final items = state.value ?? [];
+    final newItems = items.where((element) => element.id != item.id).toList();
+    state = AsyncValue.data(newItems);
   }
 }
 
-final groceryItemProvider =
-    StateNotifierProvider<GroceryItemProvider, List<GroceryItem>>((ref) {
-  return GroceryItemProvider();
-});
+final groceryItemProvider = StateNotifierProvider.autoDispose<
+    GroceryItemProvider, AsyncValue<List<GroceryItem>>>(
+  (ref) => GroceryItemProvider(),
+);
