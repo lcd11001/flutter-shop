@@ -6,11 +6,7 @@ import 'package:shopping/models/category.dart';
 import 'package:shopping/models/grocery_item.dart';
 
 import 'package:shopping/utils/thousands_formatter.dart';
-import 'package:uuid/uuid.dart';
-
 import 'package:shopping/providers/grocery_category_provider.dart';
-
-const uuid = Uuid();
 
 class NewItemScreen extends ConsumerStatefulWidget {
   const NewItemScreen({super.key});
@@ -34,7 +30,6 @@ class _NewItemScreenState extends ConsumerState<NewItemScreen> {
       // debugPrint('Category: ${_itemCategory!.name}');
       Navigator.of(context).pop(
         GroceryItem(
-          id: uuid.v4(),
           name: _itemName,
           quantity: _itemQuantity,
           category: _itemCategory!,
