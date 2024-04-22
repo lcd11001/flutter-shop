@@ -14,6 +14,7 @@ dependencies:
   intl: any
   flutter_riverpod: ^2.5.1
   uuid: ^4.4.0
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:
