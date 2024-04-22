@@ -35,6 +35,26 @@ class API {
     return null;
   }
 
+  static Future<bool> removeGroceryItem(String id) async {
+    // for testing
+    await Future.delayed(const Duration(seconds: 3));
+
+    try {
+      final response = await http.delete(
+        Uri.https(kBaseUrl, "shopping-list/$id.json"),
+      );
+
+      debugPrint("Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (exception) {
+      debugPrint("Response Exception: $exception");
+    }
+    return false;
+  }
+
   static Future<List<GroceryItem>> fetchGroceryItems() async {
     // for testing
     await Future.delayed(const Duration(seconds: 3));

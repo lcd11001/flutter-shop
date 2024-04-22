@@ -47,17 +47,11 @@ class GroceryScreen extends ConsumerWidget {
     if (newItem != null) {
       // Add the new item to the list
       debugPrint('Adding new item: $newItem');
-      final success = await ref.read(groceryItemProvider.notifier).add(newItem);
-
-      if (!success) {
-        if (context.mounted) {
-          _showErrorSnackBar(context, 'Failed to add item to the list');
-        }
-      }
+      await ref.read(groceryItemProvider.notifier).add(newItem);
     }
   }
 
-  void _removeItem(WidgetRef ref, GroceryItem item) {
+  _removeItem(WidgetRef ref, GroceryItem item) {
     debugPrint('Removing item: $item');
     ref.read(groceryItemProvider.notifier).remove(item);
   }
@@ -70,26 +64,9 @@ class GroceryScreen extends ConsumerWidget {
         content: Text('${item.name} removed from the list'),
         action: SnackBarAction(
           label: 'UNDO',
-          onPressed: () async {
-            final success =
-                await ref.read(groceryItemProvider.notifier).add(item);
-            if (!success) {
-              if (context.mounted) {
-                _showErrorSnackBar(context, 'Failed to UNDO');
-              }
-            }
-          },
+          onPressed: () async =>
+              await ref.read(groceryItemProvider.notifier).add(item),
         ),
-      ),
-    );
-  }
-
-  void _showErrorSnackBar(BuildContext context, String text) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(text),
       ),
     );
   }

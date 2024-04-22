@@ -13,25 +13,29 @@ class GroceryItemProvider extends StateNotifier<AsyncValue<List<GroceryItem>>> {
     state = await AsyncValue.guard(() => API.fetchGroceryItems());
   }
 
-  Future<bool> add(GroceryItem item) async {
-    final items = state.value!;
-    state = const AsyncLoading();
-    final newItem = await AsyncValue.guard(() => API.addGroceryItem(item));
-
-    if (mounted && newItem.value != null) {
-      // update new state
-      state = AsyncValue.data([...items, newItem.value!]);
-      return true;
-    }
-
-    return false;
+  Future<void> add(GroceryItem item) async {
+    // use copyWithPrevious to keep the previous state while loading
+    state = const AsyncLoading<List<GroceryItem>>().copyWithPrevious(state);
+    state = await AsyncValue.guard(() async {
+      final items = state.value ?? [];
+      final newItem = await API.addGroceryItem(item);
+      if (newItem != null) {
+        return [...items, newItem];
+      }
+      return items;
+    });
   }
 
-  void remove(GroceryItem item) {
-    // state = state.where((element) => element.id != item.id).toList();
-    final items = state.value ?? [];
-    final newItems = items.where((element) => element.id != item.id).toList();
-    state = AsyncValue.data(newItems);
+  Future<void> remove(GroceryItem item) async {
+    state = const AsyncLoading<List<GroceryItem>>().copyWithPrevious(state);
+    state = await AsyncValue.guard(() async {
+      final items = state.value ?? [];
+      final success = await API.removeGroceryItem(item.id);
+      if (success) {
+        return items.where((element) => element.id != item.id).toList();
+      }
+      return items;
+    });
   }
 }
 
