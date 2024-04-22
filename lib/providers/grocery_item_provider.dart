@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:shopping/api/api.dart';
@@ -8,9 +9,10 @@ class GroceryItemProvider extends StateNotifier<List<GroceryItem>> {
   GroceryItemProvider() : super(groceryItems);
 
   void add(GroceryItem item) async {
-    final success = await API.addGroceryItem(item);
+    final (success, id) = await API.addGroceryItem(item);
+    debugPrint("Success: $success, ID: $id");
     if (success) {
-      state = [...state, item];
+      state = [...state, item.clone(id)];
     }
   }
 
