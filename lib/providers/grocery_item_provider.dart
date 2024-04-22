@@ -1,12 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:shopping/api/api.dart';
 import 'package:shopping/data/dummy_items.dart';
 import 'package:shopping/models/grocery_item.dart';
 
 class GroceryItemProvider extends StateNotifier<List<GroceryItem>> {
   GroceryItemProvider() : super(groceryItems);
 
-  void add(GroceryItem item) {
-    state = [...state, item];
+  void add(GroceryItem item) async {
+    final success = await API.addGroceryItem(item);
+    if (success) {
+      state = [...state, item];
+    }
   }
 
   void remove(GroceryItem item) {

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shopping/models/category.dart';
 
 class GroceryItem {
@@ -16,5 +18,13 @@ class GroceryItem {
   @override
   String toString() {
     return '$name : $quantity : ${category.name}';
+  }
+
+  toJson() {
+    return json.encode({
+      'name': name,
+      'quantity': quantity,
+      'category': category.name,
+    });
   }
 }
