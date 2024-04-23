@@ -28,9 +28,12 @@ class API {
         Map<String, dynamic> body = json.decode(response.body);
         String id = body['name'] as String;
         return item.clone(id);
+      } else if (response.statusCode >= 400) {
+        throw Exception("Failed to add item: ${response.body}");
       }
     } catch (exception) {
       debugPrint("Response Exception: $exception");
+      rethrow;
     }
     return null;
   }
@@ -48,9 +51,12 @@ class API {
 
       if (response.statusCode == 200) {
         return true;
+      } else if (response.statusCode >= 400) {
+        throw Exception("Failed to remove item: ${response.body}");
       }
     } catch (exception) {
       debugPrint("Response Exception: $exception");
+      rethrow;
     }
     return false;
   }
@@ -75,9 +81,12 @@ class API {
         });
 
         return items;
+      } else if (response.statusCode >= 400) {
+        throw Exception("Failed to fetch items: ${response.body}");
       }
     } catch (exception) {
       debugPrint("Response Exception: $exception");
+      rethrow;
     }
     return [];
   }
