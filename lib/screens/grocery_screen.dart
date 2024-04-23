@@ -13,6 +13,7 @@ class GroceryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final groceryItems = ref.watch(groceryItemProvider);
+    final isLoading = groceryItems.isLoading;
 
     return Scaffold(
       appBar: AppBar(
@@ -27,13 +28,38 @@ class GroceryScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: GroceryList(
-        groceries: groceryItems.value ?? [],
-        onDismissed: (item) {
-          _removeItem(ref, item);
-          _showSnackBar(context, ref, item);
-        },
+      body: groceryItems.when(
+        data: (items) => Stack(
+          children: [
+            GroceryList(
+              groceries: items,
+              onDismissed: (item) {
+                _removeItem(ref, item);
+                _showSnackBar(context, ref, item);
+              },
+            ),
+            if (isLoading) _buildLoading(),
+          ],
+        ),
+        loading: _buildLoading,
+        error: _buildError,
       ),
+    );
+  }
+
+  Widget _buildLoading() {
+    return const Center(
+      child: SizedBox(
+        width: 24,
+        height: 24,
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Widget _buildError(Object error, StackTrace stack) {
+    return Center(
+      child: Text('Error: $error'),
     );
   }
 

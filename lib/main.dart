@@ -23,27 +23,13 @@ Future<void> main() async {
   );
 }
 
-class MainApp extends ConsumerWidget {
+class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(groceryItemProvider);
-
-    return MaterialApp(
-      home: Stack(
-        children: [
-          const GroceryScreen(),
-          if (state.isLoading)
-            const Center(
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(),
-              ),
-            ),
-        ],
-      ),
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: GroceryScreen(),
     );
   }
 }
